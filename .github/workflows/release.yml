@@ -9,49 +9,45 @@ permissions:
   attestations: write
   id-token: write
   contents: write
+  packages: write
 
 jobs:
-  build:
+  build_and_push_image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Build
-        run: cargo build --release
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Create a second dummy binary for demonstration
-        run: cp target/release/rust-sigstore-test target/release/another-binary
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Generate artifact attestation for rust-sigstore-test
-        id: attestation1
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test:latest
+
+      - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: "target/release/rust-sigstore-test"
-
-      - name: Generate artifact attestation for another-binary
-        id: attestation2
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: "target/release/another-binary"
-
-      - name: Calculate Hashes
-        id: hashes
-        run: |
-          hash1=$(sha256sum target/release/rust-sigstore-test | cut -d' ' -f1)
-          hash2=$(sha256sum target/release/another-binary | cut -d' ' -f1)
-          echo "sha1=$hash1" >> $GITHUB_OUTPUT
-          echo "sha2=$hash2" >> $GITHUB_OUTPUT
+          subject-name: "${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test"
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          push-to-registry: true
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            target/release/rust-sigstore-test
-            target/release/another-binary
           body: |
-            ## Artifacts & Digests (SHA256)
+            ## Docker Image Digest (SHA256)
 
-            | File | Digest | Verification |
+            | Image | Digest | Verification |
             |---|---|---|
-            | `rust-sigstore-test` | `${{ steps.hashes.outputs.sha1 }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.hashes.outputs.sha1 }}) |
-            | `another-binary` | `${{ steps.hashes.outputs.sha2 }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.hashes.outputs.sha2 }}) |
+            | `${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test` | `${{ steps.build-and-push.outputs.digest }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.build-and-push.outputs.digest }}) |
