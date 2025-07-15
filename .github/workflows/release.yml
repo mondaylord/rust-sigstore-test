@@ -19,22 +19,39 @@ jobs:
       - name: Build
         run: cargo build --release
 
-      - name: Generate artifact attestation
-        id: attestation
+      - name: Create a second dummy binary for demonstration
+        run: cp target/release/rust-sigstore-test target/release/another-binary
+
+      - name: Generate artifact attestation for rust-sigstore-test
+        id: attestation1
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: "target/release/rust-sigstore-test"
 
-      - name: Calculate SHA256
-        id: sha256
-        run: echo "sha256=$(sha256sum target/release/rust-sigstore-test | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+      - name: Generate artifact attestation for another-binary
+        id: attestation2
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "target/release/another-binary"
+
+      - name: Calculate Hashes
+        id: hashes
+        run: |
+          hash1=$(sha256sum target/release/rust-sigstore-test | cut -d' ' -f1)
+          hash2=$(sha256sum target/release/another-binary | cut -d' ' -f1)
+          echo "sha1=$hash1" >> $GITHUB_OUTPUT
+          echo "sha2=$hash2" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/release/rust-sigstore-test
+          files: |
+            target/release/rust-sigstore-test
+            target/release/another-binary
           body: |
-            ## Digest (SHA256)
-            `${{ steps.sha256.outputs.sha256 }}`
+            ## Artifacts & Digests (SHA256)
 
-            [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.sha256.outputs.sha256 }})
+            | File | Digest | Verification |
+            |---|---|---|
+            | `rust-sigstore-test` | `${{ steps.hashes.outputs.sha1 }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.hashes.outputs.sha1 }}) |
+            | `another-binary` | `${{ steps.hashes.outputs.sha2 }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.hashes.outputs.sha2 }}) |
