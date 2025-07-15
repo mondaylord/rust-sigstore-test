@@ -53,4 +53,4 @@ jobs:
 
             | Image | Digest | Verification |
             |---|---|---|
-            | `${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test` | `${{ steps.build-and-push.outputs.digest }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.build-and-push.outputs.digest }}) |
+            | `docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test` | `${{ steps.build-and-push.outputs.digest }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.build-and-push.outputs.digest }}) |
