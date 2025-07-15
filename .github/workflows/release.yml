@@ -38,7 +38,7 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: "${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test"
+          subject-name: "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test"
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
         env:
