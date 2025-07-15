@@ -13,8 +13,9 @@ Sigstore verification for this repository is integrated into the GitHub Actions 
 **Key Configuration Points:**
 
 *   **`Dockerfile`:** Your application must be containerized using a `Dockerfile` at the root of your repository. This allows the GitHub Actions workflow to build a Docker image.
-*   **GitHub Secrets:** You need to configure the following GitHub Secrets in your repository settings (`Settings > Secrets and variables > Actions`):
+*   **GitHub Variables:** You need to configure the following GitHub Variables in your repository settings (`Settings > Variables > Actions`):
     *   `DOCKERHUB_USERNAME`: Your Docker Hub username.
+*   **GitHub Secrets:** You need to configure the following GitHub Secrets in your repository settings (`Settings > Secrets and variables > Actions`):
     *   `DOCKERHUB_TOKEN`: A Docker Hub access token with push permissions.
 *   **Workflow Permissions:** The `release.yml` workflow requires specific permissions to write attestations and interact with the OIDC token:
     ```yaml
