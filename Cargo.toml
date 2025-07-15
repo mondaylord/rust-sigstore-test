@@ -1,6 +1,6 @@
 [package]
 name = "rust-sigstore-test"
-version = "0.2.10"
+version = "0.2.11"
 edition = "2024"
 
 [dependencies]

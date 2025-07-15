@@ -27,7 +27,30 @@ Sigstore verification for this repository is integrated into the GitHub Actions 
 
 ## Verifying the Docker Image Attestation
 
-To verify the provenance of the Docker image using Sigstore's `cosign` tool:
+There are two primary ways to verify the provenance of the Docker image:
+
+### Using `gh attestation verify` (Recommended for GitHub Users)
+
+This method leverages the GitHub CLI to verify attestations, especially useful when the attestation is pushed to the GitHub repository.
+
+1.  **Install GitHub CLI:**
+
+    Follow the official installation guide: [GitHub CLI Installation](https://cli.github.com/manual/installation)
+
+2.  **Verify the Attestation:**
+
+    Replace `your-username` with your GitHub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v0.2.10`).
+
+    ```bash
+    gh attestation verify oci://docker.io/your-username/rust-sigstore-test:vX.Y.Z -R your-username/rust-sigstore-test
+    ```
+
+    *   The `oci://` prefix indicates that the image is in an OCI registry.
+    *   The `-R` flag specifies the GitHub repository where the attestation is stored.
+
+### Using `cosign`
+
+`cosign` is a general-purpose tool for Sigstore verification and can be used for images in any OCI registry.
 
 1.  **Install `cosign`:**
 
@@ -35,7 +58,7 @@ To verify the provenance of the Docker image using Sigstore's `cosign` tool:
 
 2.  **Pull the Docker Image:**
 
-    Replace `your-username` with your Docker Hub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v0.2.5`).
+    Replace `your-username` with your Docker Hub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v0.2.10`).
 
     ```bash
     docker pull docker.io/your-username/rust-sigstore-test:vX.Y.Z
@@ -53,7 +76,7 @@ To verify the provenance of the Docker image using Sigstore's `cosign` tool:
     ```
 
     *   Replace `your-username` with your Docker Hub username.
-    *   Replace `vX.Y.Z` with the image tag (e.g., `v0.2.5`).
+    *   Replace `vX.Y.Z` with the image tag (e.g., `v0.2.10`).
     *   The `--certificate-identity` specifies the GitHub Actions workflow that built the image.
     *   The `--certificate-oidc-issuer` specifies the OIDC issuer for GitHub Actions.
 
