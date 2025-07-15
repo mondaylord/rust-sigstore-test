@@ -31,7 +31,7 @@ This method leverages the GitHub CLI to verify attestations, especially useful w
 
 1.  **Install GitHub CLI:**
 
-    Follow the official installation guide: [GitHub CLI Installation](https://cli.github.com/manual/installation)
+    Follow the official installation guide: [GitHub CLI Installation](https://github.com/cli/cli#installation)
 
 2.  **Verify the Attestation:**
 
