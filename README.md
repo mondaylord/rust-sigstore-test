@@ -27,10 +27,6 @@ Sigstore verification for this repository is integrated into the GitHub Actions 
 
 ## Verifying the Docker Image Attestation
 
-There are two primary ways to verify the provenance of the Docker image:
-
-### Using `gh attestation verify` (Recommended for GitHub Users)
-
 This method leverages the GitHub CLI to verify attestations, especially useful when the attestation is pushed to the GitHub repository.
 
 1.  **Install GitHub CLI:**
@@ -39,7 +35,7 @@ This method leverages the GitHub CLI to verify attestations, especially useful w
 
 2.  **Verify the Attestation:**
 
-    Replace `your-username` with your GitHub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v0.2.10`).
+    Replace `your-username` with your GitHub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v1.0.0`).
 
     ```bash
     gh attestation verify oci://docker.io/your-username/rust-sigstore-test:vX.Y.Z -R your-username/rust-sigstore-test
@@ -48,37 +44,13 @@ This method leverages the GitHub CLI to verify attestations, especially useful w
     *   The `oci://` prefix indicates that the image is in an OCI registry.
     *   The `-R` flag specifies the GitHub repository where the attestation is stored.
 
-### Using `cosign`
+3.  **Example Successful Output:**
 
-`cosign` is a general-purpose tool for Sigstore verification and can be used for images in any OCI registry.
+    A successful verification will show output similar to this:
 
-1.  **Install `cosign`:**
-
-    Follow the official installation guide: [Sigstore Cosign Installation](https://docs.sigstore.dev/cosign/system_config/installation/)
-
-2.  **Pull the Docker Image:**
-
-    Replace `your-username` with your Docker Hub username and `vX.Y.Z` with the specific tag of the image you want to verify (e.g., `v0.2.10`).
-
-    ```bash
-    docker pull docker.io/your-username/rust-sigstore-test:vX.Y.Z
     ```
-
-3.  **Verify the Attestation:**
-
-    Use `cosign verify` to check the image's signature and provenance. This command will verify that the image was built by the specified GitHub Actions workflow and has not been tampered with.
-
-    ```bash
-    cosign verify \
-      --certificate-identity "https://github.com/your-username/rust-sigstore-test/.github/workflows/release.yml@refs/tags/vX.Y.Z" \
-      --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-      docker.io/your-username/rust-sigstore-test:vX.Y.Z
+    Verified signature for docker.io/your-username/rust-sigstore-test:vX.Y.Z
     ```
-
-    *   Replace `your-username` with your Docker Hub username.
-    *   Replace `vX.Y.Z` with the image tag (e.g., `v0.2.10`).
-    *   The `--certificate-identity` specifies the GitHub Actions workflow that built the image.
-    *   The `--certificate-oidc-issuer` specifies the OIDC issuer for GitHub Actions.
 
 ## Using `docker-compose.yml`
 
