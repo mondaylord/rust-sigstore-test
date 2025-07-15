@@ -33,12 +33,12 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test:${{ github.ref_name }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test"
+          subject-name: "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test:${{ github.ref_name }}"
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
         env:
@@ -53,4 +53,4 @@ jobs:
 
             | Image | Digest | Verification |
             |---|---|---|
-            | `docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test` | `${{ steps.build-and-push.outputs.digest }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.build-and-push.outputs.digest }}) |
+            | `docker.io/${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test:${{ github.ref_name }}` | `${{ steps.build-and-push.outputs.digest }}` | [Verify on Sigstore](https://search.sigstore.dev/?hash=${{ steps.build-and-push.outputs.digest }}) |

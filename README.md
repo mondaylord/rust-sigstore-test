@@ -31,7 +31,7 @@ To verify the provenance of the Docker image using Sigstore's `cosign` tool:
 
 1.  **Install `cosign`:**
 
-    Follow the official installation guide: [Sigstore Cosign Installation](https://docs.sigstore.dev/cosign/installation/)
+    Follow the official installation guide: [Sigstore Cosign Installation](https://docs.sigstore.dev/cosign/system_config/installation/)
 
 2.  **Pull the Docker Image:**
 
