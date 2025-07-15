@@ -49,7 +49,26 @@ This method leverages the GitHub CLI to verify attestations, especially useful w
     A successful verification will show output similar to this:
 
     ```
-    Verified signature for docker.io/your-username/rust-sigstore-test:vX.Y.Z
+    gh attestation verify oci://docker.io/mondaylord/rust-sigstore-test:v1.0.1 -R mondaylord/rust-sigstore-test
+    Loaded digest sha256:0cdb3fbefe78c7a2a0c1044e4fd174a7f9aa1bc5e8db16040087c238d62f0d45 for oci://docker.io/mondaylord/rust-sigstore-test:v1.0.1
+    Loaded 1 attestation from GitHub API
+
+    The following policy criteria will be enforced:
+    - Predicate type must match:................ https://slsa.dev/provenance/v1
+    - Source Repository Owner URI must match:... https://github.com/mondaylord
+    - Source Repository URI must match:......... https://github.com/mondaylord/rust-sigstore-test
+    - Subject Alternative Name must match regex: (?i)^https://github.com/mondaylord/rust-sigstore-test/
+    - OIDC Issuer must match:................... https://token.actions.githubusercontent.com
+
+    ✓ Verification succeeded!
+
+    The following 1 attestation matched the policy criteria
+
+    - Attestation #1
+      - Build repo:..... mondaylord/rust-sigstore-test
+      - Build workflow:. .github/workflows/release.yml@refs/tags/v1.0.1
+      - Signer repo:.... mondaylord/rust-sigstore-test
+      - Signer workflow: .github/workflows/release.yml@refs/tags/v1.0.1
     ```
 
 ## Using `docker-compose.yml`
