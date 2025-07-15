@@ -41,6 +41,9 @@ jobs:
           subject-name: "${{ secrets.DOCKERHUB_USERNAME }}/rust-sigstore-test"
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
