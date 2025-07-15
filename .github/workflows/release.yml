@@ -24,6 +24,9 @@ jobs:
         with:
           subject-path: "target/release/rust-sigstore-test"
 
+      - name: List files in target/release
+        run: ls -R target/release
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
