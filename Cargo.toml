@@ -1,10 +1,10 @@
 [package]
 name = "rust-sigstore-test"
-version = "1.0.5"
+version = "1.0.6"
 edition = "2024"
 
 [dependencies]
-dstack-rust = { git = "https://github.com/Dstack-TEE/dstack.git", package = "dstack-rust" }
+dstack-sdk = { git = "https://github.com/Dstack-TEE/dstack.git", package = "dstack-sdk" }
 tokio = { version = "1", features = ["full"] }
 axum = "0.7"
 serde = { version = "1.0", features = ["derive"] }
