@@ -20,7 +20,7 @@ struct AppState {
 #[derive(Serialize)]
 struct QuoteResponse {
     quote: String,
-    event_log: Vec<u8>,
+    event_log: String,
 }
 
 #[tokio::main]
