@@ -5,7 +5,7 @@ use axum::{
     routing::get,
     Router,
 };
-use dstack_sdk::DstackClient;
+use dstack_sdk::dstack_client::DstackClient;
 use serde::Serialize;
 use serde_json::Value;
 use std::sync::Arc;
