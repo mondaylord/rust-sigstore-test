@@ -72,25 +72,77 @@ This method leverages the GitHub CLI to verify attestations, especially useful w
       - Signer workflow: .github/workflows/release.yml@refs/tags/v1.0.1
     ```
 
-## Using `docker-compose.yml`
+## Deploying on dstack: Exposing Required Endpoints
 
-The `docker-compose.yml` file demonstrates how to reference the Docker image using its SHA256 digest, which is a best practice for ensuring immutability and security.
+To deploy an application on the dstack platform, the application must expose specific HTTP endpoints. These endpoints allow the dstack service to retrieve TEE attestation data, which is crucial for verifying the integrity and identity of the running application.
 
-1.  **Get the Image Digest:**
+Specifically, dstack visualizer calls these endpoints when calculating the `app-compose` hash. The information gathered is used to ensure that the calculated `RTMR3` (Runtime-extendable Measurement Register 3) value matches the expected value in the repository (including the docker image digest and docker compose), thus confirming the application's integrity.
 
-    After a successful GitHub Actions release workflow run, the image digest (SHA256) will be available in the GitHub Release notes. Copy this digest.
+This repository provides a reference implementation of the required endpoints. Developers should adapt this example for their own applications.
 
-2.  **Update `docker-compose.yml`:**
+### Required Endpoints
 
-    Open the `docker-compose.yml` file and replace `<your-image-digest>` with the actual SHA256 digest you copied.
+Your application must implement the following two endpoints:
+
+1.  **`GET /quote`**: This endpoint must return a JSON object containing the TEE quote (`quote`) and the event log (`event_log`).
+2.  **`GET /info`**: This endpoint must return a JSON object containing the `app_compose` information from the instance's TCB (Trusted Computing Base) info.
+
+### Reference Implementation
+
+The code in `src/main.rs` demonstrates how to implement these endpoints using `axum` and the `dstack-sdk`. You can run this example to see it in action.
+
+#### Prerequisites
+
+For local testing, you need to run the dstack simulator.
+
+1.  **Clone the dstack repository and run the simulator:**
+    ```bash
+    git clone https://github.com/Dstack-TEE/dstack.git
+    cd dstack/sdk/simulator
+    ./build.sh
+    ./dstack-simulator
+    ```
+
+2.  **Set the environment variable:**
+    In a separate terminal, set the endpoint for the simulator.
+    ```bash
+    export DSTACK_SIMULATOR_ENDPOINT=http://localhost:8000
+    ```
+
+#### Running the Example
+
+With the simulator running, you can start the example server from the root of this project:
+
+```bash
+cargo run
+```
+
+You can then test the endpoints:
+
+```bash
+# Test the /quote endpoint
+curl http://localhost:8000/quote
+
+# Test the /info endpoint
+curl http://localhost:8000/info
+```
+
+## Best Practice: Using Image Digests in `docker-compose.yml`
+
+For enhanced security and to ensure immutable infrastructure, it is a best practice to reference Docker images using their SHA256 digest instead of tags (like `:latest` or `:v1.0.0`). This guarantees that you are always running the exact version of the image you intend to, protecting against tag mutability where a tag can be overwritten with a different image.
+
+### How to Use an Image Digest
+
+1.  **Find the Image Digest:** After your image is built and pushed by a CI/CD pipeline (like the one in this repository's GitHub Actions), you can find its SHA256 digest in the GitHub Release notes or in your container registry (e.g., Docker Hub).
+
+2.  **Update `docker-compose.yml`:** Open your `docker-compose.yml` file and update the `image` field to use the digest.
 
     ```yaml
     services:
       app:
+        # Replace with your actual image and digest
         image: docker.io/your-username/rust-sigstore-test@sha256:<your-image-digest>
     ```
-
-    Remember to replace `your-username` with your Docker Hub username.
 
 3.  **Run the Application:**
 
